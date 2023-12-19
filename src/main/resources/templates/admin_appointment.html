@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Rendez-vous</title>
+    <link rel="stylesheet" href="/css/appointment.css">
+</head>
+<body>
+    <div class="header">
+        <div class="profile">
+            <img class="logo" src="image/logo.png">
+            <h2>Healthy</h2>
+        </div>
+        <div class="working_time">
+            Du Lundi au Vendredi de 8H A 16H
+        </div>
+        <a class="retour" href="#">Retour</a>
+    </div>
+    <h3>Rendez-vous</h3>
+    <table th:if="${listRDVs.size()>0}">
+        <tr>
+          <th>Consultation</th>
+          <th>Date</th>
+          <th>Heure</th>
+          <th>Email du patient</th>
+          <th>Prix</th>
+            <th>Operation</th>
+        </tr>
+        <tr th:each="rdv:${listRDVs}">
+          <td th:text="${rdv.consultation.nom}"></td>
+          <td th:text="${rdv.dateRDV}"></td>
+          <td th:text="${rdv.heureRDV}"></td>
+          <td th:text="${rdv.user.email}"></td>
+          <td><span th:text="${rdv.consultation.prix}"></span> DH</td>
+          <td><a th:href="@{ad_annuler_rdv(rdvId=${rdv.id})}">Annuler</a></td>
+        </tr>
+      </table>
+<div th:if="${listRDVs.size()==0}" >Il n' y a aucun rendez-vous en enregistre</div>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre Medical</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/apointment">
+    <link rel="stylesheet" href="css/addConsultation">
+    <link rel="stylesheet" th:href="@{css/bootstrap.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="profile">
+            <img class="logo" src="image/logo.png">
+            <h2>Healthy</h2>
+        </div>
+        <div class="working_time">
+            Du Lundi au Vendredi de 8h A 16H
+        </div>
+        <a class="appointment" href="/apointment">
+            <img class="calendar"src="image/calendar.png">
+            <p>Mes Rendez-vous</p>
+        </a>
+        <div class="fas fa-user user_icon" id="login-btn"></div>
+
+        <form method="post" th:action="@{/login}" class="login-form" th:if="${authenticatedUser==null}">
+            <div>
+                <label for="email">Email</label>
+                <br>
+                <input id="email" type="text" name="username" autocomplete="true">
+            </div>
+            <div>
+                <label for="password">Password</label>
+                <br>
+                <input id="password" type="password" name="password">
+            </div>
+            <div id="signup">
+                Je suis nouveau!<a href="/signup">Creer un compte</a>
+            </div>
+            <button id="signin_button" type="submit">Envoyer</button>
+        </form>
+        <div class="login-form" th:if="${authenticatedUser!=null}">
+            <p th:text="${authenticatedUser.Nomprenom}"></p>
+            <p><a href="/logout">Se déconnecter</a></p>
+        </div>
+
+
+    </div>
+    <div class="content" >
+
+        <div th:each="soin:${listSoin}" class="consulation">
+            <img class="banner" th:src="@{${soin.image}}" alt="">
+            <div class="care">
+                <p class="care_name" th:text="${soin.nom}"></p>
+                <p class="price" th:text="${soin.prix}">DH</p>
+            </div>
+            <a class="makeappointment" th:href="@{/makeappointment(id=${soin.id})}">
+                Prendre un Rendez-vous
+            </a>
+        </div>
+    </div>
+   <div class="footer">
+        <div class="about">
+            <div>
+                <h3>Qui somme-nous?</h3>
+                <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</p>
+            </div>
+            <div class="links">
+                <a href="http://"><img src="image/twitter.png"></a>
+                <a href="http://"><img src="/image/facebook.png"></a>
+                <a href="http://"><img src="/image/instagram.jpeg"></a>
+            </div>
+        </div>
+        <div class="address_contact">
+            <h3> Lieu/Contact</h3>
+            <div class="address">
+                <img src="/image/address.png">
+                <h5>N°11, Boulevard Mohamed V angle route Marrakech n°9 
+                    <br>Rte de Khouribga, Berrchid 26202</h5>
+            </div>
+            <div class="contact">
+                <img src="/image/call.png">
+                <h5>+212 06 20 20 30</h5>
+            </div>
+            <div class="email">
+                <img src="/image/email.png">
+                <h5>Exemple@gmail.com</h5>
+            </div>
+        </div>
+    </div>
+<script src="script.js" type="application/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+:root{
+    --font-family:"HelveticaNeueLT Com 55 Roman", sans-serif;
+}
+
+*{
+    box-sizing: content-box;
+}
+body{
+    background-color: /*#F2F4FF*/#FBFAFD;
+}
+
+#box{
+    position: absolute;
+    width: 400px;
+    padding: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color:white;
+    border-radius: 20px;
+    border:1px #e6e6e6 solid;
+}
+label{
+    font-family: var(--font-family);
+    color: #717171;
+}
+
+input{
+    font-family: var(--font-family);
+    font-size: medium;
+    width: 370px;
+    height: 40px;
+    margin-bottom: 20px;
+    outline-style: none;
+    border: 1px #e6e6e6 solid;
+    border-radius: 8px;
+    padding: 10px;
+    background: #FBFAFD;
+}
+
+button{
+    height: 40px;
+    width: 100px;
+    border-radius: 50px;
+    font-family: "Roboto Medium", sans-serif;
+    border-style: none;
+    color: #f1f0f0;
+    background: #881df1;
+}
+
+#login,#signup{
+    margin-top: 20px;
+    /*background-color:white;
+    border-radius: 10px;
+    border:1px #e6e6e6 solid;*/
+    width: 440px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-family);
+    color: #717171;
+
+}
+
+#login a,#signup a{
+    text-decoration: none;
+    font-family: "HelveticaNeueLT Com 55 Roman", sans-serif;
+    margin-left: 5px;
+    color: #7c15e3;
+    width: 180px;
+    height: 30px;
+    background-color: rgba(124, 21, 227, 0.2);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#spacer{
+    width: 400px;
+    height: 1px;
+    margin-top: 20px;
+    background-color: #e6e6e6;
+}
+
+h3{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#reset_password{
+    margin-top: 20px;
+    font-family: "HelveticaNeueLT Com 55 Roman", sans-serif;
+    color: #717171;
+    text-decoration: none;
+}

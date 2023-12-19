@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Healthy</title>
+    <link rel="stylesheet" href="/css/addConsultation.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+    <h3>Prendre un rendez-vous pour <span th:text="${soin.getNom()}"></span><br> 300DH</h3>
+    <div id="box">
+        <div th:if="${result!=null}" class="alert-success" th:text="${result}"></div>
+    <form th:method="post" th:action="@{addConsultation}">
+        <input type="hidden" th:value="${soin.getId()}" name="soin_id">
+        <div>
+            <label for="hour">Heure</label>
+            <br>
+            <select id="hour" name="heureRDV">
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+            </select>
+        </div>
+        <div>
+            <label for="date">Date</label>
+            <br>
+            <input id="date" type="date" name="dateRDV" value="2023-01-30" required autocomplete="false">
+        </div>
+        <div id="control">
+            <a href="/home">Retour</a>
+            <button id="submit" type="submit">Envoyer</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

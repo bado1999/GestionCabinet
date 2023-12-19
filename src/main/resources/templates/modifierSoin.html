@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Healthy</title>
+    <link rel="stylesheet" href="/css/addConsultation.css">
+</head>
+<body>
+<h2>Modification d'une consultation</h2>
+<div id="box">
+    <form method="post" th:action="@{modifierSoin}" enctype="multipart/form-data">
+        <input type="hidden" name="soinId" th:value="${soinId}">
+        <div>
+            <label for="name">Nom</label>
+            <br>
+            <input id="name" type="text" name="nom" required autocomplete="false">
+        </div>
+
+        <div>
+            <label for="price">Price</label>
+            <br>
+            <input id="price" type="text" name="prix" required autocomplete="false">
+        </div>
+        <div>
+            <label for="banner">Banner</label>
+            <br>
+            <input id="banner" type="file" name="image">
+        </div>
+        <div id="control">
+            <a href="/admin_panel">Retour</a>
+            <button id="submit" type="submit">Envoyer</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
