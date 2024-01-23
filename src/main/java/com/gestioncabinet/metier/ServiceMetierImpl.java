@@ -5,22 +5,27 @@ import com.gestioncabinet.entities.RendezVous;
 import com.gestioncabinet.entities.Role;
 import com.gestioncabinet.entities.Soin;
 import com.gestioncabinet.entities.User;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
-@Transactional
+
 @Service @AllArgsConstructor
 public class ServiceMetierImpl implements ServiceMetier{
     private UserRepository userRepository;
     private SoinRepository soinRepository;
     private RendezvousRepository rendezvousRepository;
     private  RoleRepository roleRepository;
+
+    @Override
+    public void updateUser(User user) {
+        userRepository.save(user);
+    }
+
     @Override
     public void addUser(User user) throws Exception{
         String email=user.getEmail();
@@ -40,18 +45,18 @@ public class ServiceMetierImpl implements ServiceMetier{
     }
 
     @Override
-    public void addRDV(RendezVous rendezVous) {
-        rendezvousRepository.save(rendezVous);
+    public RendezVous addRDV(RendezVous rendezVous) {
+        return rendezvousRepository.save(rendezVous);
     }
 
     @Override
-    public Soin findSoinById(Long id) {
+    public Soin findSoinById(String id) {
         return soinRepository.findSoinById(id);
     }
 
     @Override
     public List<Soin> listSoins() {
-        return (List<Soin>) soinRepository.findAll();
+        return soinRepository.findAll();
     }
 
     @Override
@@ -70,10 +75,10 @@ public class ServiceMetierImpl implements ServiceMetier{
     }
 
     @Override
-    public void annullerRdv(Long id) {
+    public void annullerRdv(String id,User user) {
         RendezVous rendezVous=rendezvousRepository.findRendezVousById(id);
-        User user=rendezVous.getUser();
         user.getMesRDVs().remove(rendezVous);
+        updateUser(user);
         rendezvousRepository.deleteById(id);
     }
 
@@ -83,7 +88,7 @@ public class ServiceMetierImpl implements ServiceMetier{
     }
 
     @Override
-    public void supprimerSoin(Long soin) {
+    public void supprimerSoin(String soin) {
         soinRepository.deleteById(soin);
     }
 

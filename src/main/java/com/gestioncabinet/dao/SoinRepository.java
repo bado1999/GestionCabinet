@@ -1,10 +1,10 @@
 package com.gestioncabinet.dao;
 
 import com.gestioncabinet.entities.Soin;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface SoinRepository extends CrudRepository<Soin,Long> {
+
+public interface SoinRepository extends MongoRepository<Soin,String> {
     Soin findByNom(String nom);
-    Soin findSoinById(Long id);
+    Soin findSoinById(String id);
 }

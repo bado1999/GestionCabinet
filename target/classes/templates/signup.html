@@ -1,0 +1,46 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Healthy</title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<h3>Creation d'un compte</h3>
+<div id="box">
+    <div th:if="${erreur}" class="alert alert-dismissible alert-danger card text-center" th:text="${erreur}"></div>
+    <div th:if="${succes}" class="alert alert-dismissible alert-success card text-center" th:text="${succes}"></div>
+    <form method="post" th:action="@{inscription}" >
+        <div>
+            <label for="fullname" >Nom et Prenom</label>
+            <br>
+            <input id="fullname" type="text" name="fullname" required autocomplete="false">
+        </div>
+        <div>
+            <label for="username">email</label>
+            <br>
+            <input id="username" type="text" name="email" required autocomplete="false">
+        </div>
+        <div>
+            <label for="phone">Phone</label>
+            <br>
+            <input id="phone" type="tel" name="phone" required>
+        </div>
+        <div>
+            <label for="password">Mot de passe</label>
+            <br>
+            <input id="password" type="password" name="password" required>
+        </div>
+        <button id="submit" type="submit">Creer</button>
+    </form>
+    <div id="login">
+        J'ai deja un compte.<a href="/login">Se connecter</a>
+    </div>
+</div>
+
+</body>
+</html>

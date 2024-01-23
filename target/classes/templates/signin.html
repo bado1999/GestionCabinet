@@ -1,0 +1,33 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Healthy</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <h3>Authentification</h3>
+<div id="box">
+    <div th:if="${erreur}" th:text="${erreur}" class="text-center alert alert-danger card"></div>
+    <form method="post" th:action="@{/login}" >
+        <div>
+            <label for="email">Email</label>
+            <br>
+            <input id="email" type="text" name="username" autocomplete="true">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <br>
+            <input id="password" type="password" name="password">
+        </div>
+        <button id="signin_button" type="submit">Envoyer</button>
+    </form>
+    <div id="signup">
+        Je suis nouveau!<a href="/signup">Creer un compte</a>
+    </div>
+</div>
+</body>
+</html>

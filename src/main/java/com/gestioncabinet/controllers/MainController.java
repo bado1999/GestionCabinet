@@ -1,10 +1,14 @@
 package com.gestioncabinet.controllers;
 import com.gestioncabinet.entities.RendezVous;
+import com.gestioncabinet.entities.Role;
 import com.gestioncabinet.entities.Soin;
 import com.gestioncabinet.entities.User;
+import com.gestioncabinet.metier.ImageService;
 import com.gestioncabinet.metier.ServiceMetier;
 import com.gestioncabinet.utilities.FileUploadUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,10 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Date;
@@ -25,6 +26,7 @@ import java.sql.Date;
 @RequestMapping
 public class MainController {
     private ServiceMetier serviceMetier;
+    private ImageService imageService;
     private static String uploadDir = System.getProperty("user.dir")+"/src/main/resources/static/image";
     public User getAuthenticatedUser(){
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
@@ -56,7 +58,7 @@ public class MainController {
     public String signup(){return "signup";}
 
     @GetMapping("/makeappointment")
-    public String makeapointment(@RequestParam("id") Long id,Model model){
+    public String makeapointment(@RequestParam("id") String id,Model model){
         model.addAttribute("soin",serviceMetier.findSoinById(id));
         return "makeappointment";}
 
@@ -73,8 +75,12 @@ public class MainController {
         model.addAttribute("listRDVs",serviceMetier.listRDVs());
         return "admin_appointment";}
     @GetMapping("/ad_annuler_rdv")
-    public String ad_annuler_rdv(@RequestParam("rdvId")Long id){
-        serviceMetier.annullerRdv(id);
+    public String ad_annuler_rdv(@RequestParam("rdvId")String id){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails= (UserDetails) authentication.getPrincipal();
+        String username=userDetails.getUsername();
+        User user=serviceMetier.loadByEmail(username);
+        serviceMetier.annullerRdv(id,user);
         return "redirect:/admin_appointment";
     }
     @PostMapping("/inscription")
@@ -84,8 +90,11 @@ public class MainController {
         user.setEmail(email);
         user.setPhone(phone);
         user.setNomprenom(fullname);
+
         try {
+
             serviceMetier.addUser(user);
+
         }catch (Exception e){
             model.addAttribute("erreur",e.getMessage());
             return "signup";
@@ -95,7 +104,7 @@ public class MainController {
     }
 
     @PostMapping("/addConsultation")
-    public String priseRDV(@RequestParam("dateRDV") Date date, @RequestParam("heureRDV") Integer heureRDV, @RequestParam("soin_id")Long id, Model model){
+    public String priseRDV(@RequestParam("dateRDV") Date date, @RequestParam("heureRDV") Integer heureRDV, @RequestParam("soin_id")String id, Model model){
         Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails= (UserDetails) authentication.getPrincipal();
         String username=userDetails.getUsername();
@@ -105,16 +114,21 @@ public class MainController {
         Soin soin=serviceMetier.findSoinById(id);
         rendezVous.setConsultation(soin);
         User user=serviceMetier.loadByEmail(username);
+        rendezVous=serviceMetier.addRDV(rendezVous);
         user.getMesRDVs().add(rendezVous);
-        rendezVous.setUser(user);
-        serviceMetier.addRDV(rendezVous);
+        serviceMetier.updateUser(user);
+
         model.addAttribute("soin",soin);
         model.addAttribute("result","Rendez-vous bien enregistre");
         return "makeappointment";
     }
     @GetMapping("/annulerRdv")
-    public String annulerRdv(@RequestParam("rdvId")Long id){
-        serviceMetier.annullerRdv(id);
+    public String annulerRdv(@RequestParam("rdvId")String id){
+        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails= (UserDetails) authentication.getPrincipal();
+        String username=userDetails.getUsername();
+        User user=serviceMetier.loadByEmail(username);
+        serviceMetier.annullerRdv(id,user);
         return "redirect:/apointment";
     }
     @PostMapping("/addSoin")
@@ -122,43 +136,57 @@ public class MainController {
         Soin soin=new Soin();
         soin.setNom(nom);
         soin.setPrix(prix);
-        soin.setImage("/image/"+multipartFile.getOriginalFilename());
-        serviceMetier.addSoin(soin);
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         try {
-            FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+            String imageId=imageService.saveImage(multipartFile.getOriginalFilename(),multipartFile);
+            soin.setImage("/images/"+imageId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        serviceMetier.addSoin(soin);
         return "admin_add_consultation";
     }
     @GetMapping("/supprimerSoin")
-    public String supprimerSoin(@RequestParam("soinId")Long id){
+    public String supprimerSoin(@RequestParam("soinId")String id){
         serviceMetier.supprimerSoin(id);
         return "redirect:admin_panel";
     }
     @PostMapping("/modifierSoin")
-    public String modifierSoin(@RequestParam("soinId")Long id,@RequestParam("nom")String nom,@RequestParam("prix") Double prix,@RequestParam("image")MultipartFile multipartFile){
+    public String modifierSoin(@RequestParam("soinId")String id,@RequestParam("nom")String nom,@RequestParam("prix") Double prix,@RequestParam("image")MultipartFile multipartFile,Model model){
         Soin soin=serviceMetier.findSoinById(id);
         soin.setPrix(prix);
         soin.setNom(nom);
-        if (multipartFile!=null){
-            soin.setImage("/image/"+multipartFile.getOriginalFilename());
-            String fileName=soin.getImage().substring(soin.getImage().lastIndexOf("/")+1);
-            String newFileName=StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        if (!multipartFile.isEmpty()){
             try {
-                FileUploadUtil.deleteFile(uploadDir,fileName);
-                FileUploadUtil.saveFile(uploadDir,newFileName,multipartFile);
+                String imageId=imageService.saveImage(multipartFile.getOriginalFilename(),multipartFile);
+                soin.setImage("/images/"+imageId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
         serviceMetier.addSoin(soin);
+        model.addAttribute("soin",soin);
         return "modifierSoin";
     }
     @GetMapping("/modifierSoin")
-    public String modifySoin(@RequestParam("soinId")Long soinId,Model model){
-        model.addAttribute("soinId",soinId);
+    public String modifySoin(@RequestParam("soinId")String soinId,Model model){
+        Soin soin=serviceMetier.findSoinById(soinId);
+        model.addAttribute("soin",soin);
         return "modifierSoin";
+    }
+    @GetMapping("/images/{id}")
+    public ResponseEntity<?> getImage(@PathVariable("id") String imageId) throws IOException {
+        GridFsResource resource=imageService.getImage(imageId);
+        if (resource != null) {
+            try {
+                /*byte[] data = new byte[(int) resource.contentLength()];
+                resource.getInputStream().readAllBytes();*/
+                return ResponseEntity.ok(resource.getInputStream().readAllBytes());
+            } catch (IOException e) {
+                throw  e;
+                //return ResponseEntity.badRequest().body("Error reading image data");
+            }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

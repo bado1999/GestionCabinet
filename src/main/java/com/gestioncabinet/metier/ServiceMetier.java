@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ServiceMetier {
+    public  void updateUser(User user);
     public void addUser(User user) throws Exception;
     public User loadByEmail(String email);
-    public void addRDV(RendezVous rendezVous);
-    public Soin findSoinById(Long id);
+    public RendezVous addRDV(RendezVous rendezVous);
+    public Soin findSoinById(String id);
     public List<Soin> listSoins();
     public Soin findSoinByName(String nom);
     public Role findRoleByName(String nom);
     public List<RendezVous> listRDVs();
-    public void annullerRdv(Long id );
+    public void annullerRdv(String id,User user);
     public void addSoin(Soin soin);
-    public void supprimerSoin(Long id);
+    public void supprimerSoin(String id);
     public void ModifierSoin(Soin soin);
 }
